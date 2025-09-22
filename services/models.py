@@ -22,6 +22,7 @@ load_dotenv()
 
 class Models:
     def __init__(self):
+        os.makedirs('vector_db', exist_ok=True)
         self.embeddings = OpenAIEmbeddings(model="text-embedding-ada-002")
         self.llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, verbose=True)
         self._utility_service = UtilityService()
@@ -42,14 +43,14 @@ class Models:
         return Chroma(
             collection_name="example_collection",
             embedding_function=self.embeddings,
-            persist_directory="./db/chroma_langchain_db",
+            persist_directory="./vector_db/chroma_langchain_db",
         )
 
     def chroma_private_store(self):
         return Chroma(
             collection_name="example_private_collection",
             embedding_function=self.embeddings,
-            persist_directory="./db/chroma_langchain_db",
+            persist_directory="./vector_db/chroma_langchain_db",
         )
 
     def sql_chain(self):

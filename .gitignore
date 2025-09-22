@@ -9,5 +9,5 @@ middleware/__pycache__
 models/__pycache__
 documents
 myVenv
-db
+vector_db
 myVenv
