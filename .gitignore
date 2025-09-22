@@ -1,0 +1,13 @@
+.env
+__pycache__
+routers/__pycache__
+services/__pycache__
+sql/cruds/__pycache__
+sql/models/__pycache__
+sql/schemas/__pycache__
+middleware/__pycache__
+models/__pycache__
+documents
+myVenv
+db
+myVenv
