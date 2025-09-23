@@ -23,3 +23,4 @@ pypdf
 clickhouse-connect
 marshmallow-sqlalchemy
 langchain-experimental
+beautifulsoup4

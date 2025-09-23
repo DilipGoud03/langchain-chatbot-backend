@@ -4,6 +4,7 @@ from langchain_community.document_loaders.word_document import Docx2txtLoader
 from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_core.documents import Document
 import validators
+import bs4
 
 
 class FileReader():

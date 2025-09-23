@@ -41,6 +41,8 @@ class UserService:
                         str(config("SECRET_KEY")),
                         str(config("ALGORITHM"))
                     )
+                else:
+                    raise ValueError("Invalid username or password")
             if token is None:
                 raise ValueError("Invalid username or password")
             return token

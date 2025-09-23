@@ -83,7 +83,7 @@ def update_user(db: Session, user: User, new_user):
         user.email = new_user.email
 
     if hasattr(new_user, 'password') and new_user.password:
-        user.password = new_user.password
+        user.password = _encoded_password(new_user.password)
 
     if hasattr(new_user, 'user_type') and new_user.user_type:
         user.user_type = new_user.user_type
