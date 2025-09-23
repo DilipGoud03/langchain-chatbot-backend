@@ -33,6 +33,7 @@ Welcome to the backend powerhouse for your AI-driven chatbot experience! This pr
 ## 📱 Messaging Platform Integrations
 
 ### Telegram (via BotFather)
+
 1. Talk to [BotFather](https://t.me/botfather) on Telegram.
 2. Run `/newbot` and follow instructions to get your **Bot Token**.
 3. Add your token to `.env`:
@@ -46,6 +47,7 @@ Welcome to the backend powerhouse for your AI-driven chatbot experience! This pr
 5. Your bot will authenticate users as needed before providing access to private or sensitive information.
 
 ### WhatsApp (via Cloud API)
+
 1. Choose your provider ([Twilio](https://www.twilio.com/whatsapp) or [Meta Cloud API](https://developers.facebook.com/docs/whatsapp/cloud-api/)).
 2. Register your WhatsApp number & get API credentials.
 3. Add credentials to `.env`:
@@ -70,17 +72,20 @@ Welcome to the backend powerhouse for your AI-driven chatbot experience! This pr
 ## ⚡ Installation
 
 1. **Clone this repo**
+
    ```bash
    git clone https://github.com/DilipGoud03/langchain-chatbot-backend.git
    cd langchain-chatbot-backend
    ```
 
 2. **Install dependencies**
+
    ```bash
    pip install -r requirements.txt
    ```
 
 3. **Configure environment**
+
    - Copy `.env.example` to `.env`
    - Fill in your DB credentials, API keys, tokens, etc.
 
@@ -94,13 +99,13 @@ Welcome to the backend powerhouse for your AI-driven chatbot experience! This pr
 - **API**: Interact at `http://localhost:8000`
   - Example:
     ```bash
-    'curl -X 'POST' \
-  'http://127.0.0.1:8000/chat-bot/' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "query": "Hii"
-    }'
+        'curl -X 'POST' \
+        'http://127.0.0.1:8000/chat-bot/' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -d '{
+        "query": "Hii"
+            }'
     ```
 - **Authentication**: Login via API or messaging platform to unlock private document and database access.
 - **Telegram**: Chat with your bot via Telegram.
