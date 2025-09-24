@@ -1,34 +1,34 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List
-from models.user_addresses import UserAddress
+from models.employee_addresses import EmployeeAddress
 
 
-class User(BaseModel):
+class Employee(BaseModel):
     id: Optional[int] = None
     name: str
     email: EmailStr
     password: str
-    user_type: Optional[str] = ''
+    employee_type: Optional[str] = ''
 
 
-class ReadUser(BaseModel):
+class ReadEmployee(BaseModel):
     id: Optional[int] = None
     name: str
     email: EmailStr
-    user_type: Optional[str] = ''
-    addresses: List[UserAddress] = []
+    employee_type: Optional[str] = ''
+    addresses: List[EmployeeAddress] = []
 
 
-class UserLogin(BaseModel):
+class EmployeeLogin(BaseModel):
     email: EmailStr
     password: str
 
 
-class LoggedInUser(BaseModel):
+class LoggedInEmployee(BaseModel):
     id: int
     email: str
     name: str
-    user_type: str
+    employee_type: str
 
     class Config:
         from_attributes = True
@@ -41,6 +41,6 @@ class Meta(BaseModel):
     page: Optional[int]
 
 
-class UserList(BaseModel):
+class EmployeeList(BaseModel):
     meta: Meta
-    users: List[ReadUser]
+    employees: List[ReadEmployee]

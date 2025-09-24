@@ -82,11 +82,11 @@ class Models:
 
     def vector_chain(self, is_logged_in: bool = False):
         if is_logged_in:
-            print("User Is Logged-In")
+            print("Employee is Logged-In")
             retriever = self.chroma_private_store(
             ).as_retriever(search_kwargs={"k": 2})
         else:
-            print("User Is Log-Out")
+            print("Employee Is Log-Out")
             retriever = self.chroma_public_store(
             ).as_retriever(search_kwargs={"k": 2})
 

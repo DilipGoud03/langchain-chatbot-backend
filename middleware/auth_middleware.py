@@ -1,22 +1,22 @@
 import jwt
 import time
 from dotenv import load_dotenv
-from sql.cruds import users as user_crud
-from models.users import LoggedInUser
-from sql.schemas.users import LoggedInUserSchema
+from sql.cruds import employees as employee_crud
+from models.employees import LoggedInEmployee
+from sql.schemas.employees import LoggedInEmployeeSchema
 import db
 from fastapi import Request, HTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
 from decouple import config
 
 load_dotenv()
-global current_user_var
+global current_employee_var
 
 
 class AuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        global current_user_var
-        current_user_var = None
+        global current_employee_var
+        current_employee_var = None
         authorization = request.headers.get("Authorization")
         if authorization:
             try:
@@ -30,20 +30,19 @@ class AuthMiddleware(BaseHTTPMiddleware):
                     str(config("SECRET_KEY")).strip(),
                     algorithms=[str(config("ALGORITHM")).strip()],
                 )
-                user = user_crud.get_user_by_id(
+                employee = employee_crud.get_employee_by_id(
                     db.get_db(), payload.get("id", 0))
-                user_dict = LoggedInUserSchema().dump(user)
-                logged_user = LoggedInUser(**user_dict)
+                employee_dict = LoggedInEmployeeSchema().dump(employee)
+                logged_employee = LoggedInEmployee(**employee_dict) #type:ignore
 
-                current_user_var = logged_user
+                current_employee_var = logged_employee
             except Exception:
-                current_user_var = None
+                current_employee_var = None
                 pass
 
         response = await call_next(request)
         return response
 
 
-def get_current_user():
-    print("Current User Var:", current_user_var)
-    return current_user_var
+def get_current_employee():
+    return current_employee_var

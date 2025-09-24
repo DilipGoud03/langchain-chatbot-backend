@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `documents` (
   `id` int NOT NULL,
-  `user_id` int NOT NULL,
+  `employee_id` int NOT NULL,
   `type` enum('public','private') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'public',
   `original_path` varchar(255) NOT NULL,
   `doc_path` varchar(255) NOT NULL,
@@ -39,14 +39,14 @@ CREATE TABLE `documents` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Table structure for table `employees`
 --
 
-CREATE TABLE `users` (
+CREATE TABLE `employees` (
   `id` int NOT NULL,
   `name` varchar(255) DEFAULT NULL,
   `email` varchar(255) NOT NULL,
-  `user_type` enum('admin','employee') NOT NULL DEFAULT 'employee',
+  `employee_type` enum('admin','employee') NOT NULL DEFAULT 'employee',
   `password` varchar(255) NOT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime DEFAULT NULL
@@ -55,12 +55,12 @@ CREATE TABLE `users` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user_addresses`
+-- Table structure for table `employee_addresses`
 --
 
-CREATE TABLE `user_addresses` (
+CREATE TABLE `employee_addresses` (
   `id` int NOT NULL,
-  `user_id` int NOT NULL,
+  `employee_id` int NOT NULL,
   `is_default` tinyint(1) NOT NULL DEFAULT '1',
   `address` varchar(250) NOT NULL,
   `city` varchar(50) NOT NULL,
@@ -77,15 +77,15 @@ ALTER TABLE `documents`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `users`
+-- Indexes for table `employees`
 --
-ALTER TABLE `users`
+ALTER TABLE `employees`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `user_addresses`
+-- Indexes for table `employee_addresses`
 --
-ALTER TABLE `user_addresses`
+ALTER TABLE `employee_addresses`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -95,15 +95,15 @@ ALTER TABLE `documents`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `users`
+-- AUTO_INCREMENT for table `employees`
 --
-ALTER TABLE `users`
+ALTER TABLE `employees`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `user_addresses`
+-- AUTO_INCREMENT for table `employee_addresses`
 --
-ALTER TABLE `user_addresses`
+ALTER TABLE `employee_addresses`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 COMMIT;
 

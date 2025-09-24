@@ -1,22 +1,21 @@
 from fastapi import APIRouter, status, HTTPException, Depends
-from models.users import User, UserLogin, UserList, LoggedInUser, ReadUser
-from services.user import UserService
+from models.employees import Employee, EmployeeLogin, EmployeeList, LoggedInEmployee, ReadEmployee
+from services.employee import EmployeeService
 from fastapi.responses import JSONResponse
 from typing import Optional, Any, Literal
 from services.jwt_service import JWTBearer
-from fastapi.requests import Request
 
 router = APIRouter(
-    prefix="/user",
-    tags=["User"],
+    prefix="/employee",
+    tags=["Employee"],
     responses={404: {"description": "Not found"}},
 )
 
 
-@router.post('/signup', summary="Create new user")
-def create_user(user_: User) -> JSONResponse:
+@router.post('/signup', summary="Create new employee")
+def create_employee(employee_: Employee) -> JSONResponse:
     try:
-        response = UserService().CreateUser(user_)
+        response = EmployeeService().CreateEmployee(employee_)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     return JSONResponse(
@@ -25,9 +24,9 @@ def create_user(user_: User) -> JSONResponse:
 
 
 @router.post('/login')
-def login(user: UserLogin) -> JSONResponse:
+def login(employee: EmployeeLogin) -> JSONResponse:
     try:
-        token = UserService().LoginUser(user)
+        token = EmployeeService().Login(employee)
     except Exception as e:
         raise HTTPException(
             status_code=400, detail=str(e)
@@ -41,36 +40,36 @@ def login(user: UserLogin) -> JSONResponse:
     )
 
 
-@router.get('', response_model=LoggedInUser)
-def get_current_user(d: Any = Depends(JWTBearer())):
-    user = UserService().GetCurrentUser()
-    return user
+@router.get('', response_model=LoggedInEmployee)
+def get_current_employee(d: Any = Depends(JWTBearer())):
+    employee = EmployeeService().GetCurrentEmployee()
+    return employee
 
 
-@router.get('/{id:int}', response_model=ReadUser)
-def get_user(id: int, d: Any = Depends(JWTBearer())):
+@router.get('/{id:int}', response_model=ReadEmployee)
+def get_employee(id: int, d: Any = Depends(JWTBearer())):
     try:
-        response = UserService().ReadUser(id)
+        response = EmployeeService().ReadEmployee(id)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     return response
 
 
-@router.put('/{id:int}', response_model=ReadUser)
-def update_user(
+@router.put('/{id:int}', response_model=ReadEmployee)
+def update_employee(
     id: int,
-    data: User,
+    data: Employee,
     d: Any = Depends(JWTBearer())
 ):
     try:
-        response = UserService().UpdateUser(id, data)  # type:ignore
+        response = EmployeeService().UpdateEmployee(id, data)  # type:ignore
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     return response
 
 
-@router.get('/list', response_model=UserList)
-def get_users(
+@router.get('/list', response_model=EmployeeList)
+def get_employees(
     filter: str = '',
     order_by: str = 'id',
     order_direction: Literal['desc', 'asc'] = 'desc',
@@ -79,7 +78,7 @@ def get_users(
     d: Any = Depends(JWTBearer())
 ):
     try:
-        response = UserService().ReadUsers(
+        response = EmployeeService().ReadEmployees(
             filter,
             order_by,
             order_direction,
@@ -93,9 +92,9 @@ def get_users(
 
 
 @router.delete('/{id:int}')
-def delete_user(id: int):
+def delete_employee(id: int):
     try:
-        response = UserService().DeleteUser(id)
+        response = EmployeeService().DeleteEmployee(id)
     except Exception as e:
         raise HTTPException(
             status_code=400, detail=str(e)

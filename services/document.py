@@ -7,7 +7,7 @@ import uuid
 from services.models import Models
 from services.ingest import ingest_file
 import validators
-from middleware.auth_middleware import get_current_user
+from middleware.auth_middleware import get_current_employee
 load_dotenv()
 
 
@@ -19,8 +19,8 @@ class DocumentService():
 
     def CreateDocument(self, file, type: str):
         try:
-            user = get_current_user()
-            if not user and user.user_type != 'admin':
+            employee = get_current_employee()
+            if not employee and employee.employee_type != 'admin':
                 raise PermissionError("Access denied")
 
             filename = (f'{file.filename}').strip()
@@ -43,7 +43,7 @@ class DocumentService():
                 "doc_path": file_name,
                 "type": type
             }
-            doc = document_crud.create_doc(self.__db, doc_data, user.id)
+            doc = document_crud.create_doc(self.__db, doc_data, employee.id)
             return doc
         except Exception as e:
             raise ProcessLookupError(str(e))
@@ -58,6 +58,10 @@ class DocumentService():
             page: int = 1
     ):
         try:
+            # logged_in_employee = get_current_employee()
+            # if logged_in_employee.employee_type != 'admin':
+            #     type = 'public'
+
             if limit < 1:
                 limit = 10
 
@@ -92,9 +96,9 @@ class DocumentService():
 
     def DeleteDocument(self, id: int):
         try:
-            logged_in_user = get_current_user()
+            logged_in_employee = get_current_employee()
             file = document_crud._get_document_by_id(self.__db, id)
-            if not logged_in_user and logged_in_user.user_type != 'admin':
+            if not logged_in_employee and logged_in_employee.employee_type != 'admin':
                 raise PermissionError('Access denied')
             if file:
                 filepath = ''
@@ -117,8 +121,8 @@ class DocumentService():
 
     def CreateUrlDocument(self, url, type: str):
         try:
-            user = get_current_user()
-            if not user and user.user_type != 'admin':
+            employee = get_current_employee()
+            if not employee and employee.employee_type != 'admin':
                 raise PermissionError("Access denied")
 
             ingest_file(url, type)
@@ -129,7 +133,7 @@ class DocumentService():
                 "doc_path": url,
                 "type": type
             }
-            doc = document_crud.create_doc(self.__db, doc_data, user.id)
+            doc = document_crud.create_doc(self.__db, doc_data, employee.id)
             return doc
         except Exception as e:
             print(f"Exception {str(e)}")

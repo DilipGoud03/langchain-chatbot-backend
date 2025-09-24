@@ -1,9 +1,9 @@
 from pydantic import BaseModel
 from typing import Optional, List
 
-class UserAddress(BaseModel):
+class EmployeeAddress(BaseModel):
     id: Optional[int] = None
-    user_id: int
+    employee_id: int
     address: str
     city: str
     state: str

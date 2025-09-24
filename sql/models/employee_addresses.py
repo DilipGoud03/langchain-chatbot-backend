@@ -3,11 +3,11 @@ from sqlalchemy.orm import relationship
 from db import Base
 from datetime import datetime
 
-class UserAddresses(Base):
-    __tablename__ = 'user_addresses'
+class employeeAddresses(Base):
+    __tablename__ = 'employee_addresses'
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    employee_id = Column(Integer, ForeignKey("employees.id"), nullable=False)
     address = Column(String(250), nullable=True)
     city = Column(String(50), nullable=True)
     state = Column(String(50), nullable=True)

@@ -8,8 +8,8 @@ Welcome to the backend powerhouse for your AI-driven chatbot experience! This pr
 - **Multi-platform Messaging**: Chatbot integration for Telegram (via BotFather) and WhatsApp (via Cloud APIs like Twilio or Meta).
 - **FastAPI Framework**: Lightning-fast, modern Python backend.
 - **MySQL Database Support**: Persistent data storage and retrieval; ready-made tables in `AI.sql`.
-- **User Authentication**: Secure login system—authenticated users gain access to private documents and personalized database queries.
-- **Access Control**: Granular permission system restricts sensitive resources to logged-in users.
+- **User Authentication**: Secure login system—authenticated employees gain access to private documents and personalized database queries.
+- **Access Control**: Granular permission system restricts sensitive resources to logged-in employees.
 - **Modular & Scalable**: Easily extend or adapt for new use cases.
 - **Easy Frontend Integration**: Works perfectly with [langchain-chatbot-ui](https://github.com/DilipGoud03/langchain-chatbot-ui).
 
@@ -26,9 +26,9 @@ Welcome to the backend powerhouse for your AI-driven chatbot experience! This pr
 
 ## 🔒 Authentication & Access Control
 
-- **Login Required**: Users must authenticate to access private documents or sensitive database records.
-- **Private Document Access**: Authenticated users can query and receive information from protected sources (e.g., company docs, internal files).
-- **Database Security**: Only logged-in users can perform advanced or personalized queries on MySQL tables.
+- **Login Required**: employees must authenticate to access private documents or sensitive database records.
+- **Private Document Access**: Authenticated employees can query and receive information from protected sources (e.g., company docs, internal files).
+- **Database Security**: Only logged-in employees can perform advanced or personalized queries on MySQL tables.
 
 ## 📱 Messaging Platform Integrations
 
@@ -44,7 +44,7 @@ Welcome to the backend powerhouse for your AI-driven chatbot experience! This pr
    ```
    https://api.telegram.org/bot<YourBotToken>/setWebhook?url=https://your-domain.com/telegram-webhook
    ```
-5. Your bot will authenticate users as needed before providing access to private or sensitive information.
+5. Your bot will authenticate employees as needed before providing access to private or sensitive information.
 
 ### WhatsApp (via Cloud API)
 
@@ -67,7 +67,7 @@ Welcome to the backend powerhouse for your AI-driven chatbot experience! This pr
   mysql -u <username> -p <database_name> < AI.sql
   ```
 - Configure your DB connection in `.env`.
-- Authenticated users can access additional data and features from the database.
+- Authenticated employees can access additional data and features from the database.
 
 ## ⚡ Installation
 

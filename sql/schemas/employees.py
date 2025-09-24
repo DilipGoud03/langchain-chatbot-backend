@@ -1,12 +1,12 @@
 from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow_sqlalchemy.fields import Nested
-from sql.models.users import User as UserModel
+from sql.models.employees import Employee as EmployeeModel
 
 
-class LoggedInUserSchema(SQLAlchemyAutoSchema):
+class LoggedInEmployeeSchema(SQLAlchemyAutoSchema):
     class Meta:
-        model = UserModel
+        model = EmployeeModel
         load_instance = True
         include_relationships = True
         include_fk = True
@@ -14,13 +14,13 @@ class LoggedInUserSchema(SQLAlchemyAutoSchema):
             "id",
             "email",
             "name",
-            "user_type",
+            "employee_type",
         )
 
 
-class UserSchema(SQLAlchemyAutoSchema):
+class EmployeeSchema(SQLAlchemyAutoSchema):
     class Meta:
-        model = UserModel
+        model = EmployeeModel
         load_instance = True
         include_relationships = True
         include_fk = True
@@ -29,17 +29,17 @@ class UserSchema(SQLAlchemyAutoSchema):
             "name",
             "email",
             "password",
-            "user_type",
+            "employee_type",
             "created_at",
             "updated_at",
             "addresses",
         )
-    # user = Nested(UserContactSchema())
+    # employee = Nested(employeeContactSchema())
 
 
-class CreateUserSchema(SQLAlchemyAutoSchema):
+class CreateEmployeeSchema(SQLAlchemyAutoSchema):
     class Meta:
-        model = UserModel
+        model = EmployeeModel
         load_instance = True
         include_relationships = True
         include_fk = True
@@ -50,9 +50,9 @@ class CreateUserSchema(SQLAlchemyAutoSchema):
         )
 
 
-class ReadAllUser(SQLAlchemyAutoSchema):
+class ReadAllEmployeeSchema(SQLAlchemyAutoSchema):
     class Meta:
-        model = UserModel
+        model = EmployeeModel
         load_instance = True
         include_relationships = True
         include_fk = True
@@ -62,9 +62,9 @@ class ReadAllUser(SQLAlchemyAutoSchema):
             "name",
             "email",
             "password",
-            "user_type",
+            "employee_type",
             "created_at",
             "updated_at",
             "addresses",
         )
-    # user = Nested(UserContactSchema())
+    # employee = Nested(employeeContactSchema())

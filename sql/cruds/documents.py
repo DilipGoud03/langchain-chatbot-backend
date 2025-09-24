@@ -1,15 +1,15 @@
 from sqlalchemy.orm import Session
 from sql.models.documents import Document
-from sql.models.users import User
+from sql.models.employees import Employee
 from sqlalchemy import and_, asc, desc, func, or_
 
 
-def create_doc(db: Session, data: dict, user_id: int):
+def create_doc(db: Session, data: dict, employee_id: int):
     document = Document()
     document.original_path = data.get("original_path", '')
     document.doc_path = data.get("doc_path", '')
     document.type = data.get("type", '')
-    document.user_id = user_id # type: ignore
+    document.employee_id = employee_id # type: ignore
     db.add(document)
     db.commit()
     db.refresh(document)
@@ -36,11 +36,11 @@ def list_documents(
     limit: int = 10,
     type: str = '',
     page: int = 1,
-    user_id: int = 0
+    employee_id: int = 0
 ):
 
     query = db.query(Document).join(
-        User, User.id == Document.user_id, isouter=True)
+        Employee, Employee.id == Document.employee_id, isouter=True)
 
     if filter and filter != "":
         filter_data = "%{}%".format(filter.strip())
@@ -49,16 +49,16 @@ def list_documents(
                 Document.id.like(filter_data),
                 Document.original_path.like(filter_data),
                 Document.doc_path.like(filter_data),
-                Document.user_id.like(filter_data),
-                User.id.like(filter_data),
-                User.name.like(filter_data),
-                User.email.like(filter_data),
+                Document.employee_id.like(filter_data),
+                Employee.id.like(filter_data),
+                Employee.name.like(filter_data),
+                Employee.email.like(filter_data),
             )
 
         )
 
-    if user_id and user_id > 0:
-        query = query.filter(Document.user_id == user_id)
+    if employee_id and employee_id > 0:
+        query = query.filter(Document.employee_id == employee_id)
 
     if type and type != 'all':
         query = query.filter(Document.type == type)

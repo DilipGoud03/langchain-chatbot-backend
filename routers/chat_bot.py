@@ -3,7 +3,7 @@ from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
 from services.models import Models
 from models.chat_bot import ChatModel
-from middleware.auth_middleware import get_current_user
+from middleware.auth_middleware import get_current_employee
 
 router = APIRouter(
     prefix='/chat-bot',
@@ -17,9 +17,9 @@ def start_chat(
     question: ChatModel
 ):
     try:
-        user = get_current_user()
+        employee = get_current_employee()
         is_logged_in = False
-        if user:
+        if employee:
             is_logged_in = True
         response = ai_model.generate_answer(question.query, is_logged_in)
     except Exception as e:
