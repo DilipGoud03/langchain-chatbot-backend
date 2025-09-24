@@ -64,6 +64,7 @@ class Models:
 
                 If this is a database-related question:
                     - Use the SQL Query and SQL Result to answer.
+                    - Only perform GET oprations, don't perform DELETE and UPDATE operations.
                     - SQL Query: {query}
                     - SQL Result: {result}
                     - Don't use id values and created_at values in your answer.
@@ -74,6 +75,7 @@ class Models:
             """),
             ("ai", "Final Answer:"),
         ])
+        # db_chain = SQLDatabaseChain.from_llm(self.llm, db, prompt=answer_prompt)
 
         answer = answer_prompt | self.llm
         chain = (RunnablePassthrough.assign(query=write_query | RunnableLambda(
@@ -109,10 +111,10 @@ class Models:
 
         sql_response = ''
         if is_logged_in:
-            print("SQL Response:", sql_response)
             response = self.sql_chain().invoke({"question": query})
             sql_response = response.content
 
+        print("SQL Response:", sql_response)
         vector_chain = self.vector_chain(is_logged_in)
         vector_response = vector_chain.invoke({"input": query})
         print("VECTOR Response:", vector_response)

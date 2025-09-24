@@ -46,3 +46,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
 
 def get_current_employee():
     return current_employee_var
+
+def employee_has_role(role: str) -> bool:
+    employee = get_current_employee()
+    return bool(employee and hasattr(employee, 'employee_type') and employee.employee_type == role)
