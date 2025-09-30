@@ -88,9 +88,9 @@ Welcome to the backend powerhouse for your AI-driven chatbot experience! This pr
 
    2. Activate virtual environment.
 
-   ```bash
-   source myVenv/bin/activate
-   ```
+      ```bash
+      source myVenv/bin/activate
+      ```
 2. **Install dependencies**
 
       ```bash
