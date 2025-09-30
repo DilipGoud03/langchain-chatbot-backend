@@ -77,12 +77,25 @@ Welcome to the backend powerhouse for your AI-driven chatbot experience! This pr
    git clone https://github.com/DilipGoud03/langchain-chatbot-backend.git
    cd langchain-chatbot-backend
    ```
+   
+2. **Create and Activate virtual Enviorment**
 
-2. **Install dependencies**
+   1. Create a virtual environment.
+
+      ```bash
+      python -m venv myvenv
+      ```
+
+   2. Activate virtual environment.
 
    ```bash
-   pip install -r requirements.txt
+   source myVenv/bin/activate
    ```
+2. **Install dependencies**
+
+      ```bash
+      pip install -r requirements.txt
+      ```
 
 3. **Configure environment**
 
