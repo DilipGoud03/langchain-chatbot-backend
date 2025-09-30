@@ -106,6 +106,10 @@ Welcome to the backend powerhouse for your AI-driven chatbot experience! This pr
    ```bash
    uvicorn main:app --reload
    ```
+   OR
+   ```bash
+   fastapi dev main.py
+   ```
 
 ## 💬 Usage
 
