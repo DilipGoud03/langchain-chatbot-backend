@@ -1,45 +1,70 @@
 import re
 
+# ------------------------------------------------------------
+# Module: utility_service
+# Description:
+#   Provides utility helper functions for text and SQL processing.
+#   - Cleans AI-generated SQL queries by removing markdown syntax,
+#     formatting inconsistencies, and extraneous text.
+# ------------------------------------------------------------
+
 
 class UtilityService:
+    # ------------------------------------------------------------
+    # Method: __init__
+    # Description:
+    #   Initializes the UtilityService.
+    #   Prints an initialization message for debugging/logging.
+    # ------------------------------------------------------------
     def __init__(self):
-        print("You are In utility service")
-        pass
+        print("UtilityService initialized")
 
+    # ------------------------------------------------------------
+    # Method: clean_sql_query
+    # Description:
+    #   Cleans and normalizes SQL query text (especially from AI output).
+    #
+    # Workflow:
+    #     1. Removes markdown code block syntax (```sql ... ```).
+    #     2. Removes prefixes like “SQLQuery:” or “SQL:”.
+    #     3. Extracts only the main SQL statement (starting from SELECT).
+    #     4. Removes backticks from identifiers.
+    #     5. Normalizes whitespace.
+    #     6. Adds line breaks before key SQL clauses for readability.
+    #
+    # Parameters:
+    #   - text (str): The raw SQL text input.
+    #
+    # Returns:
+    #   - str: The cleaned and formatted SQL query.
+    # ------------------------------------------------------------
     def clean_sql_query(self, text: str) -> str:
-        
-        # step 1: remove code block syntax any SQL related tags
+        # Step 1: Remove code block syntax and SQL-related tags
         block_pattern = r"```(?:sql|SQL|SQLQuery|mysql|postgresql)?\s*(.*?)\s*```"
         text = re.sub(block_pattern, r"\1", text, flags=re.DOTALL)
 
-        # Step 2: Handle the "SQLQuery" prefix and similar variations
+        # Step 2: Remove "SQLQuery" or similar prefixes
         prefix_pattern = r"^(?:SQL\s*Query|SQLQuery|MySQL|PostgreSQL|SQL)\s*:\s*"
         text = re.sub(prefix_pattern, "", text, flags=re.IGNORECASE)
 
-        # step3: Extract the first SQL statement if there's random text after it
+        # Step 3: Extract the first SQL statement (starting from SELECT)
         sql_statement_pattern = r"(SELECT.*?;)"
-        sql_match = re.search(sql_statement_pattern, text,
-                              flags=re.IGNORECASE | re.DOTALL)
-
+        sql_match = re.search(sql_statement_pattern, text, flags=re.IGNORECASE | re.DOTALL)
         if sql_match:
             text = sql_match.group(1)
 
-        # step 4 : REmove backticks around identifiers
+        # Step 4: Remove backticks around identifiers
         text = re.sub(r'`([^`]*)`', r'\1', text)
 
-        # step 5: Normalise whitespace
+        # Step 5: Normalize whitespace
         text = re.sub(r'\s+', ' ', text)
 
-        # step 6: Preserve newlines for main SQL keywords
+        # Step 6: Add line breaks before main SQL keywords
         keywords = ['SELECT', 'FROM', 'WHERE', 'GROUP BY']
-
-        # case sensitive replacement for keywords
         pattern = '|'.join(r'\b{}\b'.format(k) for k in keywords)
         text = re.sub(f'({pattern})', r'\n\1', text, flags=re.IGNORECASE)
 
-        # Step 7:Final Cleanup
-
-        # remove leading trailing whitespace
+        # Step 7: Final cleanup (trim and remove extra newlines)
         text = text.strip()
         text = re.sub(r'\n\s*\n', '\n', text)
 

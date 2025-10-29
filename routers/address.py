@@ -2,10 +2,14 @@ from fastapi import APIRouter, status, HTTPException, Depends
 from models.employee_addresses import EmployeeAddress
 from services.employee_address import EmployeeAddressService
 from fastapi.responses import JSONResponse
-from typing import Optional, Any, Literal
+from typing import Any
 from services.jwt_service import JWTBearer
 from fastapi.requests import Request
 
+
+# ------------------------------------------------------------
+# Router configuration for Employee-related address operations
+# ------------------------------------------------------------
 router = APIRouter(
     prefix="/employee",
     tags=["Employee"],
@@ -13,23 +17,36 @@ router = APIRouter(
 )
 
 
-@router.post('/{employee_id:int}/address', summary="Create new employee address")
+# ------------------------------------------------------------
+# Endpoint: Create new employee address
+# Description:
+#   - Adds a new address for a specific employee.
+#   - Requires authentication via JWTBearer.
+# ------------------------------------------------------------
+@router.post("/{employee_id:int}/address", summary="Create new employee address")
 def create_employee_address(
     employee_id: int,
     address: EmployeeAddress,
     d: Any = Depends(JWTBearer())
-
 ) -> JSONResponse:
     try:
         response = EmployeeAddressService().CreateNewAddress(employee_id, address)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
     return JSONResponse(
-        status_code=200, content=f"message: {response}"
+        status_code=status.HTTP_200_OK,
+        content={"message": response},
     )
 
 
-@router.get('/{employee_id:int}/address/list', summary="Get employee address list")
+# ------------------------------------------------------------
+# Endpoint: Get employee address list
+# Description:
+#   - Retrieves all saved addresses for a given employee.
+#   - Only accessible for authenticated users.
+# ------------------------------------------------------------
+@router.get("/{employee_id:int}/address/list", summary="Get employee address list")
 def get_employee_address_list(
     employee_id: int,
     d: Any = Depends(JWTBearer())
@@ -42,14 +59,23 @@ def get_employee_address_list(
     return response
 
 
-@router.delete('/address/{id:int}')
-def delete_employee_address(id: int):
+# ------------------------------------------------------------
+# Endpoint: Delete employee address by ID
+# Description:
+#   - Deletes a specific employee address using its ID.
+#   - Can be restricted via authentication (recommended).
+# ------------------------------------------------------------
+@router.delete("/address/{id:int}", summary="Delete employee address by ID")
+def delete_employee_address(
+    id: int,
+    d: Any = Depends(JWTBearer())
+):
     try:
         response = EmployeeAddressService().DeleteEmployeeAddress(id)
     except Exception as e:
-        raise HTTPException(
-            status_code=400, detail=str(e)
-        )
+        raise HTTPException(status_code=400, detail=str(e))
+
     return JSONResponse(
-        content=response, status_code=200
+        content={"message": response},
+        status_code=status.HTTP_200_OK,
     )

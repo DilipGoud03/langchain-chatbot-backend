@@ -7,11 +7,20 @@ import validators
 import bs4
 
 
-class FileReader():
-    def __init__(self):
-        print("Here")
+class FileReader:
+    """Utility class for reading and loading content from various file types."""
 
-    def file_loader(self, file) -> list:
+    def __init__(self):
+        print("FileReader initialized")
+
+    # ------------------------------------------------------------
+    # Method: file_loader
+    # Description:
+    #   Determines the file type (PDF, DOCX, CSV, TXT, or Web URL)
+    #   and loads the content using the appropriate loader.
+    #   - Supports both local and remote (URL) files.
+    # ------------------------------------------------------------
+    def file_loader(self, file: str) -> list[Document]:
         if file:
             if validators.url(file):
                 return self.read_web_page(file)
@@ -25,22 +34,47 @@ class FileReader():
                 return self.read_text(file)
         return []
 
-    def read_doc(self, file):
+    # ------------------------------------------------------------
+    # Method: read_doc
+    # Description:
+    #   Loads and parses a DOCX file into LangChain Document objects.
+    # ------------------------------------------------------------
+    def read_doc(self, file: str) -> list[Document]:
         doc = Docx2txtLoader(file)
         return doc.load()
 
-    def read_csv(self, file):
+    # ------------------------------------------------------------
+    # Method: read_csv
+    # Description:
+    #   Loads and parses a CSV file into LangChain Document objects.
+    # ------------------------------------------------------------
+    def read_csv(self, file: str) -> list[Document]:
         csv = CSVLoader(file)
         return csv.load()
 
-    def read_pdf(self, file):
+    # ------------------------------------------------------------
+    # Method: read_pdf
+    # Description:
+    #   Loads and extracts text from a PDF file into LangChain Documents.
+    # ------------------------------------------------------------
+    def read_pdf(self, file: str) -> list[Document]:
         pdf = PyPDFLoader(file)
         return pdf.load()
 
-    def read_web_page(self, path):
+    # ------------------------------------------------------------
+    # Method: read_web_page
+    # Description:
+    #   Fetches and parses a web page (URL) into LangChain Document objects.
+    # ------------------------------------------------------------
+    def read_web_page(self, path: str) -> list[Document]:
         web_page = WebBaseLoader(web_path=[path])
         return web_page.load()
 
-    def read_text(self, file):
+    # ------------------------------------------------------------
+    # Method: read_text
+    # Description:
+    #   Loads and parses a plain text file into LangChain Document objects.
+    # ------------------------------------------------------------
+    def read_text(self, file: str) -> list[Document]:
         text = TextLoader(file_path=file)
         return text.load()

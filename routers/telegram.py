@@ -4,12 +4,26 @@ from fastapi.responses import JSONResponse
 from fastapi.requests import Request
 from services.telegram_service import TelegramService
 
+# ------------------------------------------------------------
+# Router: Telegram
+# Description:
+#   Handles Telegram bot webhook events.
+#   Receives updates from Telegram servers and processes user messages.
+# ------------------------------------------------------------
 router = APIRouter(
     prefix='/telegram',
     tags=["Tele-Gram"]
 )
 
 
+# ------------------------------------------------------------
+# Endpoint: POST /webhook
+# Description:
+#   Receives webhook events from Telegram.
+#   - Extracts chat ID and message text.
+#   - If text is '/start', triggers the start handler.
+#   - Otherwise, replies to the user's message using TelegramService.
+# ------------------------------------------------------------
 @router.post("/webhook")
 async def webhook(request: Request):
     try:
@@ -18,6 +32,8 @@ async def webhook(request: Request):
             chat_id = data["message"]["chat"]["id"]
             text = data["message"].get("text", "")
             print(data)
+
+            # Handle start command separately
             if text != '/start':
                 TelegramService()._reply_message(chat_id, text)
             else:

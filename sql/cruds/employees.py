@@ -1,39 +1,87 @@
 from sql.models.employees import Employee
 from sqlalchemy.orm import Session
 import bcrypt
-from sqlalchemy import and_, asc, desc, or_
+from sqlalchemy import asc, desc, or_
 
 
+# ------------------------------------------------------------
+# Module: employee_crud
+# Description:
+#   Provides CRUD operations for managing employee records.
+#   Includes helpers for password hashing, filtering, and pagination.
+# ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# Method: get_employee_by_id
+# Description:
+#   Retrieves an employee record using the employee ID.
+# ------------------------------------------------------------
 def get_employee_by_id(db: Session, employee_id: int) -> Employee:
     return db.query(Employee).filter(Employee.id == employee_id).first()
 
 
+# ------------------------------------------------------------
+# Method: get_employee_by_email
+# Description:
+#   Fetches an employee record by their email address.
+# ------------------------------------------------------------
 def get_employee_by_email(db: Session, email: str) -> Employee:
     return db.query(Employee).filter(Employee.email == email).first()
 
 
+# ------------------------------------------------------------
+# Method: create_employee
+# Description:
+#   Creates a new employee record in the database.
+#   - Hashes the password before saving.
+# ------------------------------------------------------------
 def create_employee(db: Session, employee_data) -> Employee:
     employee = Employee()
     employee.name = employee_data.name
     employee.email = employee_data.email
     employee.password = _encoded_password(employee_data.password)  # type: ignore
+
     db.add(employee)
     db.commit()
     db.refresh(employee)
     return employee
 
 
-def _encoded_password(password):
+# ------------------------------------------------------------
+# Method: _encoded_password
+# Description:
+#   Hashes a plain-text password using bcrypt with salt.
+# ------------------------------------------------------------
+def _encoded_password(password: str) -> bytes:
     salt = bcrypt.gensalt()
-    return bcrypt.hashpw(bytes(password, "utf-8"), salt)
+    return bcrypt.hashpw(password.encode("utf-8"), salt)
 
 
-def _check_password(password, hashed_password) -> bool:
-    h_password = bytes(hashed_password, "utf-8")
-    _password = bytes(password, "utf-8")
-    return bcrypt.checkpw(_password, h_password)
+# ------------------------------------------------------------
+# Method: _check_password
+# Description:
+#   Verifies if a plain-text password matches a hashed one.
+# ------------------------------------------------------------
+def _check_password(password: str, hashed_password: str) -> bool:
+    return bcrypt.checkpw(password.encode("utf-8"), hashed_password.encode("utf-8"))
 
 
+# ------------------------------------------------------------
+# Method: read_employees
+# Description:
+#   Retrieves a paginated list of employees with optional filters and sorting.
+#
+# Parameters:
+#   - filter (str): Search keyword for employee ID, name, or email.
+#   - order_by (str): Column name to order results by (default: 'id').
+#   - order_direction (str): Sort order, 'asc' or 'desc' (default: 'desc').
+#   - limit (int): Number of records per page (default: 10).
+#   - page (int): Page number (default: 1).
+#
+# Returns:
+#   - dict: Contains employee list and pagination metadata.
+# ------------------------------------------------------------
 def read_employees(
     db: Session,
     filter: str = '',
@@ -42,41 +90,48 @@ def read_employees(
     limit: int = 10,
     page: int = 1
 ):
-    query = (db.query(Employee)
-            #  .filter(and_(Employee.employee_type != 'admin'))
-             )  # type: ignore
+    query = db.query(Employee)
 
-    if filter and filter != "":
-        filter_data = "%{}%".format(filter.strip())
+    # Apply text-based filters
+    if filter:
+        filter_data = f"%{filter.strip()}%"
         query = query.filter(
             or_(
                 Employee.id.like(filter_data),
                 Employee.name.like(filter_data),
                 Employee.email.like(filter_data),
             )
-
         )
 
-    if order_by and order_by != "":
-        dicrection = desc if order_direction == 'desc' else asc
-        query = query.order_by(dicrection(getattr(Employee, order_by)))
+    # Sorting
+    if order_by:
+        direction = desc if order_direction == 'desc' else asc
+        query = query.order_by(direction(getattr(Employee, order_by)))
 
-    all = query.count()
+    # Count before pagination
+    total_items = query.count()
 
-    if limit and limit > 0:
-        query = query.limit(limit)
-        offset = (int(page) - 1) * limit
-        query = query.offset(offset)
+    # Pagination
+    if limit > 0:
+        offset = (page - 1) * limit
+        query = query.limit(limit).offset(offset)
 
     employees = query.all()
+
     return {
-        "all_items": all,
+        "all_items": total_items,
         "employees": employees
     }
 
 
+# ------------------------------------------------------------
+# Method: update_employee
+# Description:
+#   Updates an employee record with new data fields.
+#   - Supports partial updates (only non-empty fields are applied).
+# ------------------------------------------------------------
 def update_employee(db: Session, employee: Employee, new_employee):
-    if hasattr(new_employee, 'name') and new_employee.name != '':
+    if hasattr(new_employee, 'name') and new_employee.name:
         employee.name = new_employee.name
 
     if hasattr(new_employee, 'email') and new_employee.email:
