@@ -62,8 +62,6 @@ async def reply_incoming_message(request: Request):
                     value = change.get("value", {})
                     messages = value.get("messages", [])
 
-                    print(data)  # Debug log (can be replaced with proper logging)
-
                     for msg in messages:
                         from_number = msg["from"]
                         text = msg.get("text", {}).get("body")

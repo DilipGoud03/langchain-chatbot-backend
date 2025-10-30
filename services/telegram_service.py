@@ -1,12 +1,12 @@
 from decouple import config
 import requests
-from services.llm_modelss import LLMModels
+from services.langchain_service import LangchainService
 
 # ------------------------------------------------------------
 # Module: telegram_service
 # Description:
 #   Handles all Telegram Bot API interactions.
-#   - Integrates with LLMModels for intelligent replies.
+#   - Integrates with LangchainService for intelligent replies.
 #   - Sends and receives chat messages through Telegram.
 # ------------------------------------------------------------
 
@@ -22,7 +22,7 @@ class TelegramService:
     def __init__(self):
         self.__telegram_token = str(config("BOT_TOKEN")).strip()
         self.__telegram_api_url = str(config("TELEGRAM_API_URL")).strip()
-        self.__llm_models = LLMModels()
+        self.__langchain_service = LangchainService()
 
     # ------------------------------------------------------------
     # Method: _start_app
@@ -68,7 +68,7 @@ class TelegramService:
             url = f"{self.__telegram_api_url}/bot{self.__telegram_token}"
 
             # Generate AI response
-            reply_text = self.__llm_models.generate_answer(query)
+            reply_text = self.__langchain_service.generate_answer(query)
 
             payload = {"chat_id": chat_id, "text": reply_text['answer']}
             response = requests.post(f"{url}/sendMessage", json=payload)

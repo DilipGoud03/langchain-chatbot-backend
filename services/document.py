@@ -4,17 +4,18 @@ from decouple import config
 from dotenv import load_dotenv
 from sql.cruds import documents as document_crud
 import uuid
-from services.llm_modelss import LLMModels
-from services.ingest import ingest_file
+from services.langchain_service import LangchainService
+from services.document_ingestion_service import DocumentIngestionService
 import validators
 from middleware.auth_middleware import get_current_employee
+
 
 # ------------------------------------------------------------
 # Service: DocumentService
 # Description:
 #   Handles creation, retrieval, deletion, and ingestion of
-#   documents (file or URL-based). Integrates with OpenAI
-#   models for indexing and vector operations.
+#   documents (file or URL-based). Integrates with LangChain
+#   and OpenAI models for indexing, vectorization, and search.
 # ------------------------------------------------------------
 
 load_dotenv()
@@ -23,43 +24,51 @@ load_dotenv()
 class DocumentService:
     # ------------------------------------------------------------
     # Constructor
-    # Initializes database connection, document directory path,
-    # and OpenAI model instance.
+    # Description:
+    #   Initializes the database connection, document directory,
+    #   OpenAI/LangChain service instance, and ingestion service.
     # ------------------------------------------------------------
     def __init__(self):
         self.__db = db.get_db()
         self.__dir_name = str(config("DIR_NAME")).strip()
-        self.__opne_ai_model = LLMModels()
+        self.__opne_ai_model = LangchainService()
+        self.__ingestion_service = DocumentIngestionService()
 
     # ------------------------------------------------------------
-    # Method: CreateDocument
+    # Method: create_document
     # Description:
-    #   Handles file upload and record creation for documents.
-    #   - Validates user access (only admin allowed).
-    #   - Checks for duplicate file name.
-    #   - Saves file to disk and inserts DB record.
+    #   Handles local file upload and database record creation.
+    #   - Validates user access (admin only).
+    #   - Prevents duplicate file names.
+    #   - Saves file to disk and stores metadata in the database.
     # ------------------------------------------------------------
-    def CreateDocument(self, file, type: str):
+    def create_document(self, file, type: str):
         try:
             employee = get_current_employee()
             if not employee and employee.employee_type != 'admin':
                 raise PermissionError("Access denied")
 
+            # Check for duplicate document names
             filename = (f'{file.filename}').strip()
             exist_document = document_crud._get_document_by_original_name(self.__db, filename)
             if exist_document:
                 raise ValueError(
-                    "Please rename this file because this is already exist in our record."
+                    "Please rename this file because it already exists in our records."
                 )
 
+            # Ensure directory exists
             os.makedirs(self.__dir_name, exist_ok=True)
-            extenssion = os.path.splitext(file.filename)[1].lower()
-            file_name = f"{type}_{uuid.uuid4().hex}{extenssion}"
 
+            # Generate unique file name
+            extension = os.path.splitext(file.filename)[1].lower()
+            file_name = f"{type}_{uuid.uuid4().hex}{extension}"
             file_path = os.path.join(self.__dir_name, file_name)
+
+            # Save file to disk
             with open(file_path, "wb") as out_file:
                 out_file.write(file.file.read())
 
+            # Create DB record
             doc_data = {
                 "original_path": filename,
                 "doc_path": file_name,
@@ -73,12 +82,12 @@ class DocumentService:
             raise ProcessLookupError(str(e))
 
     # ------------------------------------------------------------
-    # Method: ReadDocuments
+    # Method: read_documents
     # Description:
-    #   Retrieves a paginated list of documents with metadata.
-    #   - Supports filtering, ordering, and pagination.
+    #   Retrieves paginated list of documents with metadata.
+    #   - Supports filters, sorting, pagination, and type filters.
     # ------------------------------------------------------------
-    def ReadDocuments(
+    def read_documents(
         self,
         filter: str = '',
         order_by: str = 'id',
@@ -93,6 +102,7 @@ class DocumentService:
             if page < 1:
                 page = 1
 
+            # Fetch paginated document data
             docs = document_crud.list_documents(
                 self.__db,
                 filter,
@@ -103,14 +113,16 @@ class DocumentService:
                 page,
             )
 
-            all = docs["all_items"]
+            all_items = docs["all_items"]
             documents = docs["docs"]
+
             meta = {
                 "current_item": len(documents),
                 "limit": limit,
                 "page": page,
-                "total_items": all
+                "total_items": all_items
             }
+
             return {
                 "meta": meta,
                 "documents": documents
@@ -120,25 +132,29 @@ class DocumentService:
             raise ProcessLookupError(str(e))
 
     # ------------------------------------------------------------
-    # Method: DeleteDocument
+    # Method: delete_document
     # Description:
-    #   Deletes a document by ID.
-    #   - Verifies admin access.
+    #   Deletes a document by ID from both database and file system.
+    #   - Validates admin access.
     #   - Removes physical file (if applicable).
-    #   - Deletes vectorized data from OpenAI model.
+    #   - Deletes associated vectors from the vector database.
     # ------------------------------------------------------------
-    def DeleteDocument(self, id: int):
+    def delete_document(self, id: int):
         try:
             logged_in_employee = get_current_employee()
             file = document_crud._get_document_by_id(self.__db, id)
+
             if not logged_in_employee and logged_in_employee.employee_type != 'admin':
                 raise PermissionError('Access denied')
 
             if file:
                 filepath = ''
                 _path = str(file.doc_path)
+
+                # Delete database record
                 self.__db.delete(file)
 
+                # Determine file source (local or remote)
                 if validators.url(_path):
                     filepath = _path
                 else:
@@ -147,34 +163,37 @@ class DocumentService:
                         os.remove(file_path)
                         filepath = file_path.replace('_', '')
 
+                # Delete vectors from LangChain store
                 if filepath != '':
                     self.__opne_ai_model._delete_documents(filepath)
 
                 self.__db.commit()
-                return "Document has deleted"
+                return "Document has been deleted successfully."
 
-            raise ValueError("Document not found for provided id")
+            raise ValueError("Document not found for the provided ID.")
 
         except Exception as e:
             raise ProcessLookupError(str(e))
 
     # ------------------------------------------------------------
-    # Method: CreateUrlDocument
+    # Method: create_url_document
     # Description:
-    #   Creates a document entry from a remote file URL.
-    #   - Validates user access (admin only).
-    #   - Uses ingest_file() to process the document.
-    #   - Saves metadata in the database.
+    #   Creates a new document entry from a remote file or webpage URL.
+    #   - Validates admin access.
+    #   - Uses DocumentIngestionService to process and index the file.
+    #   - Stores metadata in the database for retrieval.
     # ------------------------------------------------------------
-    def CreateUrlDocument(self, url, type: str):
+    def create_url_document(self, url, type: str):
         try:
             employee = get_current_employee()
             if not employee and employee.employee_type != 'admin':
                 raise PermissionError("Access denied")
 
-            ingest_file(url, type)
+            # Ingest document from URL into vector stores
+            self.__ingestion_service.ingest_file(url, type)
             filename = url.split('/')[-1]
 
+            # Create DB record
             doc_data = {
                 "original_path": filename,
                 "doc_path": url,

@@ -29,8 +29,8 @@ class Employee(Base):
     employee_type = Column(String(255), nullable=True, default='employee')      # Type of employee (e.g., admin, staff)
     created_at = Column(String(255), default=datetime.now(), nullable=False)    # Timestamp of record creation
     updated_at = Column(String(255), nullable=False, onupdate=datetime.now())   # Timestamp of last update
-    addresses = relationship(
-        employeeAddresses,
-        cascade="all,delete",
-        backref='employees'
-    )  # Relationship to employeeAddresses (one-to-many)
+    # addresses = relationship(
+    #     employeeAddresses,
+    #     cascade="all,delete",
+    #     backref='employees'
+    # )  # Relationship to employeeAddresses (one-to-many)

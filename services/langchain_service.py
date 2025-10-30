@@ -1,5 +1,3 @@
-from langchain_pinecone import PineconeVectorStore
-from pinecone import Pinecone, ServerlessSpec
 from dotenv import load_dotenv
 from langchain_chroma import Chroma
 import os
@@ -15,12 +13,10 @@ from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 from langchain.chains.llm import LLMChain
 from services.utility import UtilityService
 from db import SQLALCHEMY_DATABASE_URL
-# Import dynamic providers
-from services.models.openai_model import OpenAIProvider
-from services.models.gemini_model import GeminiProvider
+from services.llm_service import LLMService
 
 # ------------------------------------------------------------
-# Module: llm_models
+# Module: langchain_service
 # Description:
 #   Centralized handler for LLM interactions, embeddings,
 #   and retrieval-augmented generation (RAG) pipelines.
@@ -31,15 +27,15 @@ load_dotenv()
 
 
 # ------------------------------------------------------------
-# Class: LLMModels
+# Class: LangchainService
 # Description:
 #   Provides high-level methods for:
 #     - Managing LLMs and embeddings.
-#     - Integrating Pinecone & Chroma vector stores.
+#     - Integrating Chroma vector stores.
 #     - Executing SQL-aware question answering.
 #     - Combining RAG-based and SQL-based responses.
 # ------------------------------------------------------------
-class LLMModels:
+class LangchainService:
     # ------------------------------------------------------------
     # Method: __init__
     # Description:
@@ -49,32 +45,10 @@ class LLMModels:
     def __init__(self):
         os.makedirs("vector_db", exist_ok=True)
         provider_name = os.getenv("MODEL_PROVIDER", "openai").lower()
-
-        if provider_name == "gemini":
-            self.provider = GeminiProvider()
-        else:
-            self.provider = OpenAIProvider()
-
-        self.llm = self.provider.get_chat_model()
-        self.embeddings = self.provider.get_embedding_model()
+        self.llm_service = LLMService(provider_name)
+        self.llm = self.llm_service.get_chat_model()
+        self.embeddings = self.llm_service.get_embedding_model()
         self._utility_service = UtilityService()
-
-    # ------------------------------------------------------------
-    # Method: pinecone_store
-    # Description:
-    #   Initializes and returns a Pinecone vector store.
-    #   Automatically creates index if missing.
-    # ------------------------------------------------------------
-    def pinecone_store(self, index_name):
-        pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
-        if not pc.has_index(index_name):
-            pc.create_index(
-                name=index_name,
-                dimension=1536,  # must match embedding model
-                metric="dotproduct",
-                spec=ServerlessSpec(cloud='aws', region='us-east-1')
-            )
-        return PineconeVectorStore(embedding=self.embeddings, index_name=index_name)
 
     # ------------------------------------------------------------
     # Method: chroma_public_store

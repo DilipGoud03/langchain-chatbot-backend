@@ -28,7 +28,7 @@ router = APIRouter(
 @router.post('/signup', summary="Create new employee")
 def create_employee(employee_: Employee) -> JSONResponse:
     try:
-        response = EmployeeService().CreateEmployee(employee_)
+        response = EmployeeService().create_employee(employee_)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     
@@ -45,7 +45,7 @@ def create_employee(employee_: Employee) -> JSONResponse:
 @router.post('/login')
 def login(employee: EmployeeLogin) -> JSONResponse:
     try:
-        token = EmployeeService().Login(employee)
+        token = EmployeeService().login(employee)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -62,7 +62,7 @@ def login(employee: EmployeeLogin) -> JSONResponse:
 # ------------------------------------------------------------
 @router.get('', response_model=LoggedInEmployee)
 def get_current_employee(d: Any = Depends(JWTBearer())):
-    employee = EmployeeService().GetCurrentEmployee()
+    employee = EmployeeService().get_current_employee()
     return employee
 
 
@@ -74,7 +74,7 @@ def get_current_employee(d: Any = Depends(JWTBearer())):
 @router.get('/{id:int}', response_model=ReadEmployee)
 def get_employee(id: int, d: Any = Depends(JWTBearer())):
     try:
-        response = EmployeeService().ReadEmployee(id)
+        response = EmployeeService().read_employee(id)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     return response
@@ -92,7 +92,7 @@ def update_employee(
     d: Any = Depends(JWTBearer())
 ):
     try:
-        response = EmployeeService().UpdateEmployee(id, data)  # type:ignore
+        response = EmployeeService().update_employee(id, data)  # type:ignore
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     return response
@@ -114,7 +114,7 @@ def get_employees(
     d: Any = Depends(JWTBearer())
 ):
     try:
-        response = EmployeeService().ReadEmployees(
+        response = EmployeeService().read_employees(
             filter,
             order_by,
             order_direction,
@@ -135,7 +135,7 @@ def get_employees(
 @router.delete('/{id:int}')
 def delete_employee(id: int):
     try:
-        response = EmployeeService().DeleteEmployee(id)
+        response = EmployeeService().delete_employee(id)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     

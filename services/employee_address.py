@@ -1,7 +1,5 @@
 import db
 from sql.cruds import employee_addresses as employee_address_crud
-import jwt
-from datetime import datetime, timedelta
 from decouple import config
 from dotenv import load_dotenv
 from middleware.auth_middleware import get_current_employee
@@ -26,13 +24,13 @@ class EmployeeAddressService:
         self.__db = db.get_db()
 
     # ------------------------------------------------------------
-    # Method: CreateNewAddress
+    # Method: create_employee_address
     # Description:
     #   Creates a new address record for an employee.
     #   - Verifies user authentication.
     #   - Updates existing default address if necessary.
     # ------------------------------------------------------------
-    def CreateNewAddress(self, employee_id, data):
+    def create_employee_address(self, employee_id, data):
         try:
             logged_in_employee = get_current_employee()
             if not logged_in_employee:
@@ -50,13 +48,13 @@ class EmployeeAddressService:
             raise ProcessLookupError(str(e))
 
     # ------------------------------------------------------------
-    # Method: DeleteEmployeeAddress
+    # Method: delete_employee_address
     # Description:
     #   Deletes an existing employee address by ID.
     #   - Prevents deletion of default address.
     #   - Restricts access to admin or the owner employee.
     # ------------------------------------------------------------
-    def DeleteEmployeeAddress(self, address_id):
+    def delete_employee_address(self, address_id):
         try:
             logged_in_employee = get_current_employee()
             if not logged_in_employee:
@@ -85,12 +83,12 @@ class EmployeeAddressService:
             raise ProcessLookupError(str(e))
 
     # ------------------------------------------------------------
-    # Method: ReadEmployeeAdrresses
+    # Method: read_employee_addresses
     # Description:
     #   Retrieves all addresses for a specific employee.
     #   - Restricts access to admin or the employee themselves.
     # ------------------------------------------------------------
-    def ReadEmployeeAdrresses(self, employee_id: int):
+    def read_employee_addresses(self, employee_id: int):
         try:
             logged_in_employee = get_current_employee()
             if not logged_in_employee:

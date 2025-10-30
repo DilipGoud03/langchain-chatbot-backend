@@ -50,7 +50,7 @@ def upload_document(
             raise HTTPException(status_code=400, detail="This file type is not allowed")
 
         # Save document through the service layer
-        doc = DocumentService().CreateDocument(file, type)
+        doc = DocumentService().create_document(file, type)
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -67,7 +67,7 @@ def upload_document(
 def upload_url_document(data: URLUpload):
     try:
         # Process URL-based document upload
-        doc = DocumentService().CreateUrlDocument(data.url, data.type)
+        doc = DocumentService().create_url_document(data.url, data.type)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -90,7 +90,7 @@ def read_documents(
     page: int = 1
 ):
     try:
-        response = DocumentService().ReadDocuments(
+        response = DocumentService().read_documents(
             filter,
             order_by,
             order_direction,
@@ -112,7 +112,7 @@ def read_documents(
 @router.delete('/{id:int}')
 def delete_document(id: int):
     try:
-        response = DocumentService().DeleteDocument(id)
+        response = DocumentService().delete_document(id)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     

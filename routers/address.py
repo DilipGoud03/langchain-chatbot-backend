@@ -30,7 +30,7 @@ def create_employee_address(
     d: Any = Depends(JWTBearer())
 ) -> JSONResponse:
     try:
-        response = EmployeeAddressService().CreateNewAddress(employee_id, address)
+        response = EmployeeAddressService().create_employee_address(employee_id, address)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -52,7 +52,7 @@ def get_employee_address_list(
     d: Any = Depends(JWTBearer())
 ):
     try:
-        response = EmployeeAddressService().ReadEmployeeAdrresses(employee_id)
+        response = EmployeeAddressService().read_employee_addresses(employee_id)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -71,7 +71,7 @@ def delete_employee_address(
     d: Any = Depends(JWTBearer())
 ):
     try:
-        response = EmployeeAddressService().DeleteEmployeeAddress(id)
+        response = EmployeeAddressService().delete_employee_address(id)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 

@@ -7,18 +7,29 @@ import validators
 import bs4
 
 
-class FileReader:
-    """Utility class for reading and loading content from various file types."""
+# ------------------------------------------------------------
+# Module: document_reader
+# Description:
+#   Provides utilities to read and load content from multiple
+#   file formats (PDF, DOCX, CSV, TXT) and web URLs into
+#   standardized LangChain Document objects for further processing.
+# ------------------------------------------------------------
 
+
+class DocumentReader:
+    # ------------------------------------------------------------
+    # Initialize Class
+    # ------------------------------------------------------------
     def __init__(self):
-        print("FileReader initialized")
+        print("DocumentReader initialized")
 
     # ------------------------------------------------------------
     # Method: file_loader
     # Description:
     #   Determines the file type (PDF, DOCX, CSV, TXT, or Web URL)
     #   and loads the content using the appropriate loader.
-    #   - Supports both local and remote (URL) files.
+    #   - Automatically detects URLs using the validators package.
+    #   - Returns a list of LangChain Document objects.
     # ------------------------------------------------------------
     def file_loader(self, file: str) -> list[Document]:
         if file:
@@ -37,7 +48,8 @@ class FileReader:
     # ------------------------------------------------------------
     # Method: read_doc
     # Description:
-    #   Loads and parses a DOCX file into LangChain Document objects.
+    #   Loads and parses a Microsoft Word (.docx) file into
+    #   LangChain Document objects for downstream processing.
     # ------------------------------------------------------------
     def read_doc(self, file: str) -> list[Document]:
         doc = Docx2txtLoader(file)
@@ -47,6 +59,7 @@ class FileReader:
     # Method: read_csv
     # Description:
     #   Loads and parses a CSV file into LangChain Document objects.
+    #   Each row is typically treated as a separate Document.
     # ------------------------------------------------------------
     def read_csv(self, file: str) -> list[Document]:
         csv = CSVLoader(file)
@@ -55,7 +68,8 @@ class FileReader:
     # ------------------------------------------------------------
     # Method: read_pdf
     # Description:
-    #   Loads and extracts text from a PDF file into LangChain Documents.
+    #   Loads and extracts textual content from a PDF file into
+    #   LangChain Document objects. Handles multi-page PDFs.
     # ------------------------------------------------------------
     def read_pdf(self, file: str) -> list[Document]:
         pdf = PyPDFLoader(file)
@@ -64,7 +78,8 @@ class FileReader:
     # ------------------------------------------------------------
     # Method: read_web_page
     # Description:
-    #   Fetches and parses a web page (URL) into LangChain Document objects.
+    #   Fetches and parses a web page (URL) into LangChain Document
+    #   objects using BeautifulSoup for HTML parsing.
     # ------------------------------------------------------------
     def read_web_page(self, path: str) -> list[Document]:
         web_page = WebBaseLoader(web_path=[path])
@@ -73,7 +88,8 @@ class FileReader:
     # ------------------------------------------------------------
     # Method: read_text
     # Description:
-    #   Loads and parses a plain text file into LangChain Document objects.
+    #   Loads and parses a plain text (.txt) file into LangChain
+    #   Document objects for ingestion and vectorization.
     # ------------------------------------------------------------
     def read_text(self, file: str) -> list[Document]:
         text = TextLoader(file_path=file)

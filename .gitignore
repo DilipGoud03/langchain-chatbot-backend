@@ -10,4 +10,5 @@ models/__pycache__
 documents
 myVenv
 vector_db
-myVenv
+langchain-chatbot-venv
+logs

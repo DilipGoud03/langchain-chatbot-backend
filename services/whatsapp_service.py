@@ -1,7 +1,7 @@
 from decouple import config
 import requests
 from dotenv import load_dotenv
-from services.llm_modelss import LLMModels
+from services.langchain_service import LangchainService
 
 load_dotenv()
 
@@ -26,7 +26,7 @@ class WhatsAppService:
         self.__access_token = str(config("ACCESS_TOKEN")).strip()
         self.phone_number_id = config("PHONE_NUMBER_ID")
         self.__graph_api_url = config("GRAPH_API_URL")
-        self.__llm_models = LLMModels()
+        self.__langchain_service = LangchainService()
 
     # ------------------------------------------------------------
     # Method: reply_whatsapp_message
@@ -50,7 +50,7 @@ class WhatsAppService:
     def reply_whatsapp_message(self, to: str, query: str):
         try:
             url = f"{self.__graph_api_url}/{self.phone_number_id}/messages"
-            reply_message = self.__llm_models.generate_answer(query)
+            reply_message = self.__langchain_service.generate_answer(query)
 
             headers = {
                 "Authorization": f"Bearer {self.__access_token}",

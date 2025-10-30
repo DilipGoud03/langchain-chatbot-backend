@@ -50,7 +50,6 @@ class EmployeeSchema(SQLAlchemyAutoSchema):
             "updated_at",
             "addresses",
         )
-    # addresses = Nested(employeeAddressSchema())  # Example for nested relation
 
 
 # ------------------------------------------------------------
@@ -98,4 +97,3 @@ class ReadAllEmployeeSchema(SQLAlchemyAutoSchema):
             "updated_at",
             "addresses",
         )
-    # addresses = Nested(employeeAddressSchema())  # Optional nested relationship

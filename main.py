@@ -4,11 +4,11 @@ from fastapi.staticfiles import StaticFiles
 from apscheduler.schedulers.background import BackgroundScheduler
 from routers import employees, whatsapp, telegram, document, chat_bot, address
 from middleware.auth_middleware import AuthMiddleware
-from services.ingest import main_loop
+from services.document_ingestion_service import DocumentIngestionService
 from utils.logger import logger
 import os
 
-
+ingestion_service = DocumentIngestionService()
 # ------------------------------------------------------------
 # Application: FastAPI Server
 # Description:
@@ -22,9 +22,9 @@ import os
 # Initialize FastAPI Application
 # ------------------------------------------------------------
 app = FastAPI(
-    title="Video Analyzer API",
+    title="chat-bot",
     version="1.0",
-    description="A backend service for managing videos, employees, and chat integrations."
+    description="A backend service for managing document, employees, and chat integrations."
 )
 
 
@@ -88,7 +88,7 @@ scheduler = BackgroundScheduler()
 @app.on_event("startup")
 def start_scheduler():
     logger.info("Scheduler starting...")
-    scheduler.add_job(main_loop, 'interval', id='main_loop_job', seconds=10)
+    scheduler.add_job(ingestion_service.main_loop, 'interval', id='main_loop_job', seconds=10)
     scheduler.start()
     logger.info("Scheduler started successfully.")
 
@@ -112,4 +112,4 @@ def shutdown_scheduler():
 @app.get("/")
 async def root():
     logger.info("Root endpoint accessed.")
-    return {"message": "FastAPI Running ✅"}
+    return {"message": "FastAPI Running "}

@@ -19,10 +19,9 @@ Welcome to the backend powerhouse for your AI-driven chatbot experience! This pr
 - **FastAPI**
 - **LangChain**
 - **Telegram Bot API**
-- **WhatsApp Cloud API** (Twilio/Meta)
+- **WhatsApp Cloud API** (Meta)
 - **MySQL**
-- **Authentication** (JWT, OAuth2, or session-based)
-- **Docker** (optional, for deployment)
+- **Authentication** (JWT)
 
 ## 🔒 Authentication & Access Control
 
@@ -48,7 +47,7 @@ Welcome to the backend powerhouse for your AI-driven chatbot experience! This pr
 
 ### WhatsApp (via Cloud API)
 
-1. Choose your provider ([Twilio](https://www.twilio.com/whatsapp) or [Meta Cloud API](https://developers.facebook.com/docs/whatsapp/cloud-api/)).
+1. provider [Meta Cloud API](https://developers.facebook.com/docs/whatsapp/cloud-api/)).
 2. Register your WhatsApp number & get API credentials.
 3. Add credentials to `.env`:
    ```
@@ -83,13 +82,13 @@ Welcome to the backend powerhouse for your AI-driven chatbot experience! This pr
    1. Create a virtual environment.
 
       ```bash
-      python -m venv myvenv
+      python -m venv langchain-chatbot-venv
       ```
 
    2. Activate virtual environment.
 
       ```bash
-      source myVenv/bin/activate
+      source langchain-chatbot-venv/bin/activate
       ```
 2. **Install dependencies**
 

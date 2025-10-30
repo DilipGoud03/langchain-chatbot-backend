@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
-from services.llm_modelss import LLMModels
+from services.langchain_service import LangchainService
 from models.chat_bot import ChatModel
 from middleware.auth_middleware import get_current_employee
 
@@ -17,7 +17,7 @@ router = APIRouter(
 )
 
 # Initialize the AI model service
-ai_model = LLMModels()
+langchain_service = LangchainService()
 
 
 # ------------------------------------------------------------
@@ -33,7 +33,7 @@ def start_chat(question: ChatModel):
     try:
         employee = get_current_employee()      # Retrieve currently authenticated user
         is_logged_in = bool(employee)          # Flag login status for context-aware response
-        response = ai_model.generate_answer(question.query, is_logged_in)  # Get AI response
+        response = langchain_service.generate_answer(question.query, is_logged_in)  # Get AI response
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     

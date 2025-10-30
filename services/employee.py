@@ -8,6 +8,12 @@ from middleware.auth_middleware import get_current_employee
 
 load_dotenv()
 
+# ------------------------------------------------------------
+# Service: EmployeeService
+# Description:
+#   Handles CRUD operations for employee.
+#   Includes access control to ensure employees can only
+# ------------------------------------------------------------
 
 class EmployeeService:
     """Service layer for handling employee-related operations."""
@@ -16,13 +22,13 @@ class EmployeeService:
         self.__db = db.get_db()
 
     # ------------------------------------------------------------
-    # Method: CreateEmployee
+    # Method: create_employee
     # Description:
     #   Creates a new employee record in the database.
     #   - Checks if an email already exists.
     #   - Inserts new employee data if unique.
     # ------------------------------------------------------------
-    def CreateEmployee(self, employee_data):
+    def create_employee(self, employee_data):
         try:
             employee = employee_crud.get_employee_by_email(self.__db, employee_data.email)
             if employee:
@@ -33,13 +39,13 @@ class EmployeeService:
             raise LookupError(str(e))
 
     # ------------------------------------------------------------
-    # Method: Login
+    # Method: login
     # Description:
     #   Authenticates an employee by email and password.
     #   - Validates credentials.
     #   - Returns a JWT token valid for 1 day if successful.
     # ------------------------------------------------------------
-    def Login(self, employee_data):
+    def login(self, employee_data):
         try:
             employee_name = employee_data.email
             password = employee_data.password
@@ -69,11 +75,11 @@ class EmployeeService:
             raise ProcessLookupError(str(e))
 
     # ------------------------------------------------------------
-    # Method: GetCurrentEmployee
+    # Method: get_current_employee
     # Description:
     #   Retrieves the currently authenticated employee.
     # ------------------------------------------------------------
-    def GetCurrentEmployee(self):
+    def get_current_employee(self):
         try:
             employee = get_current_employee()
             return employee
@@ -81,11 +87,11 @@ class EmployeeService:
             raise ProcessLookupError(str(e))
 
     # ------------------------------------------------------------
-    # Method: ReadEmployee
+    # Method: read_employee
     # Description:
     #   Fetches a specific employee's details by ID.
     # ------------------------------------------------------------
-    def ReadEmployee(self, id: int):
+    def read_employee(self, id: int):
         try:
             employee = employee_crud.get_employee_by_id(self.__db, id)
             if not employee:
@@ -95,12 +101,12 @@ class EmployeeService:
             raise ProcessLookupError(str(e))
 
     # ------------------------------------------------------------
-    # Method: ReadEmployees
+    # Method: read_employees
     # Description:
     #   Retrieves a paginated list of employees.
     #   - Supports filtering, sorting, and pagination.
     # ------------------------------------------------------------
-    def ReadEmployees(
+    def read_employees(
         self,
         filter: str = '',
         order_by: str = 'id',
@@ -140,12 +146,12 @@ class EmployeeService:
             raise ProcessLookupError(str(e))
 
     # ------------------------------------------------------------
-    # Method: DeleteEmployee
+    # Method: delete_employee
     # Description:
     #   Deletes an employee record by ID.
     #   - Only admins or the employee themselves can perform this.
     # ------------------------------------------------------------
-    def DeleteEmployee(self, id: int):
+    def delete_employee(self, id: int):
         try:
             logged_in_employee = get_current_employee()
             if not logged_in_employee:
@@ -165,14 +171,14 @@ class EmployeeService:
             raise ProcessLookupError(str(e))
 
     # ------------------------------------------------------------
-    # Method: UpdateEmployee
+    # Method: update_employee
     # Description:
     #   Updates an employee’s details.
     #   - Ensures permission: only admin or self.
     #   - Prevents duplicate emails.
     #   - Restricts non-admins from promoting themselves to admin.
     # ------------------------------------------------------------
-    def UpdateEmployee(self, id: int, data):
+    def update_employee(self, id: int, data):
         try:
             logged_in_employee = get_current_employee()
             if not logged_in_employee:
