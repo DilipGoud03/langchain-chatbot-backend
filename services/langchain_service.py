@@ -46,8 +46,8 @@ class LangchainService:
         os.makedirs("vector_db", exist_ok=True)
         provider_name = os.getenv("MODEL_PROVIDER", "openai").lower()
         self.llm_service = LLMService(provider_name)
-        self.llm = self.llm_service.get_chat_model()
-        self.embeddings = self.llm_service.get_embedding_model()
+        self.llm = self.llm_service.chat_model()
+        self.embeddings = self.llm_service.embedding_model()
         self._utility_service = UtilityService()
 
     # ------------------------------------------------------------

@@ -41,9 +41,11 @@ Welcome to the backend powerhouse for your AI-driven chatbot experience! This pr
    ```
 4. (Optional for cloud) Set webhook for your deployed backend:
    ```
-   https://api.telegram.org/bot<YourBotToken>/setWebhook?url=https://your-domain.com/telegram-webhook
+    curl -X POST "https://api.telegram.org/bot<token>/setWebhook" \
+     -H "Content-Type: application/json" \
+     -d '{"url": <url>}'
+
    ```
-5. Your bot will authenticate employees as needed before providing access to private or sensitive information.
 
 ### WhatsApp (via Cloud API)
 

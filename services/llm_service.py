@@ -69,23 +69,23 @@ class LLMService:
         return OpenAIEmbeddings(model="text-embedding-ada-002")
 
     # ------------------------------------------------------------
-    # Method: get_chat_model
+    # Method: chat_model
     # Description:
     #   Automatically returns the appropriate chat model
     #   depending on the configured provider.
     # ------------------------------------------------------------
-    def get_chat_model(self):
+    def chat_model(self):
         if self.provider == 'openai':
-            return self.openai_chat_model()
-        return self.gemini_chat_model()
+            return self.openai_chat_model
+        return self.gemini_chat_model
 
     # ------------------------------------------------------------
-    # Method: get_embedding_model
+    # Method: embedding_model
     # Description:
     #   Automatically returns the appropriate embedding model
     #   depending on the configured provider.
     # ------------------------------------------------------------
-    def get_embedding_model(self):
+    def embedding_model(self):
         if self.provider == 'openai':
-            return self.openai_embedding_model()
-        return self.gemini_embedding_model()
+            return self.openai_embedding_model
+        return self.gemini_embedding_model
