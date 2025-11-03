@@ -8,7 +8,7 @@
 #   It supports both chat models and embedding models.
 # ------------------------------------------------------------
 
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
 from langchain.chat_models import init_chat_model
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
@@ -39,7 +39,7 @@ class LLMService:
     #   the latest "gemini-2.5-flash" version.
     # ------------------------------------------------------------
     def gemini_chat_model(self):
-        return init_chat_model("gemini-2.5-flash", model_provider="google_genai")
+        return ChatGoogleGenerativeAI(model="gemini-2.5-flash")
 
     # ------------------------------------------------------------
     # Method: gemini_embedding_model
@@ -76,8 +76,8 @@ class LLMService:
     # ------------------------------------------------------------
     def chat_model(self):
         if self.provider == 'openai':
-            return self.openai_chat_model
-        return self.gemini_chat_model
+            return self.openai_chat_model()
+        return self.gemini_chat_model()
 
     # ------------------------------------------------------------
     # Method: embedding_model
@@ -87,5 +87,5 @@ class LLMService:
     # ------------------------------------------------------------
     def embedding_model(self):
         if self.provider == 'openai':
-            return self.openai_embedding_model
-        return self.gemini_embedding_model
+            return self.openai_embedding_model()
+        return self.gemini_embedding_model()
