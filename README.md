@@ -5,7 +5,7 @@ Welcome to the backend powerhouse for your AI-driven chatbot experience! This pr
 ## 🚀 Features
 
 - **LangChain-powered AI**: Advanced natural language processing with LangChain.
-- **Multi-platform Messaging**: Chatbot integration for Telegram (via BotFather) and WhatsApp (via Cloud APIs like Twilio or Meta).
+- **Multi-platform Messaging**: Chatbot integration for Telegram (via BotFather) and WhatsApp (via Cloud APIs like  Meta).
 - **FastAPI Framework**: Lightning-fast, modern Python backend.
 - **MySQL Database Support**: Persistent data storage and retrieval; ready-made tables in `AI.sql`.
 - **User Authentication**: Secure login system—authenticated employees gain access to private documents and personalized database queries.
