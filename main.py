@@ -7,7 +7,9 @@ from middleware.auth_middleware import AuthMiddleware
 from services.document_ingestion_service import DocumentIngestionService
 from utils.logger import logger
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 ingestion_service = DocumentIngestionService()
 # ------------------------------------------------------------
 # Application: FastAPI Server
@@ -88,7 +90,8 @@ scheduler = BackgroundScheduler()
 @app.on_event("startup")
 def start_scheduler():
     logger.info("Scheduler starting...")
-    scheduler.add_job(ingestion_service.main_loop, 'interval', id='main_loop_job', seconds=10)
+    scheduler.add_job(ingestion_service.main_loop, 'interval',
+                      id='main_loop_job', seconds=10)
     scheduler.start()
     logger.info("Scheduler started successfully.")
 
